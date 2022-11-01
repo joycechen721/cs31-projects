@@ -17,6 +17,92 @@ bool isValidUppercaseStateCode(string stateCode);
 bool isValidPartyResult(string partyResult);
 
 int main() {
+    cout << "Testing started" << endl;
+    //empty poll data string
+    assert(isValidPollString("")  == true);
+    //state code is 1 letter
+    assert(isValidPollString("I")  == false);
+    //correct state code, but no party results
+    assert(isValidPollString("IL")  == true);
+    //correct state code, but not uppercase
+    assert(isValidPollString("iL")  == true);
+    //poll data that doesn't include party codes
+    assert(isValidPollString("iL0")  == false);
+    //single state forecast with 1 party result
+    assert(isValidPollString("iL0E")  == true);
+    //single state forecast with multiple party results
+    assert(isValidPollString("NY9R16D1I") == true);
+    //extra space after results
+    assert(isValidPollString("NJ3D5R4D ")  == false);
+    //extra comma with no state code following after
+    assert(isValidPollString("VT,")  == false);
+    //single comma, nothing before and nothing after
+    assert(isValidPollString(",") == false);
+    //extra space(s) within poll data string
+    assert(isValidPollString("CT 0D") == false);
+    //starts off with comma
+    assert(isValidPollString(",VT") == false);
+    //no state code before the party results & after the comma
+    assert(isValidPollString("VT,3R6Y") == false);
+    //poll data from 1 state with mix of single and double-digit party results
+    assert(isValidPollString("VT3R06Y00D") == true);
+    //party results have mix of upper and lowercase characters
+    assert(isValidPollString("VT3r06Y00d") == true);
+    //extra character 'I' after first poll data string
+    assert(isValidPollString("NY9R16D1II,VT,NJ3D5R4D,kS4R") == false);
+    //multiple state forecasts
+    assert(isValidPollString("nY9R16D1I,VT,NJ3D5R4D,kS4R") == true);
+    //multiple state forecasts with hyphen in between (negative number?)
+    assert(isValidPollString("CT5D,NY9R16D1I,VT,ne-3r00D") == false);
+    
+    int seats = 0;
+    //party code is an invalid space character
+    assert(countSeats("", ' ', seats) == 2 && seats == 0);
+    //party code is an invalid character & integer other than space
+    assert(countSeats("", '%', seats) == 2 && seats == 0);
+    assert(countSeats("", '1', seats) == 2 && seats == 0);
+    //party code character is in state code
+    assert(countSeats("IL", 'I', seats) == 0 && seats == 0);
+    //party code character is in both state code and party results
+    assert(countSeats("IL0I2I03I", 'I', seats) == 0 && seats == 5);
+    seats = 0;
+    //invalid poll data
+    assert(countSeats(",", 'I', seats) == 1 && seats == 0);
+    //no such party code within poll data
+    assert(countSeats("VT3R06Y00D", 'I', seats) == 0 && seats == 0);
+    //party code exists, but 0 votes
+    assert(countSeats("VT3R06Y00D", 'D', seats) == 0 && seats == 0);
+    //party code exists, mix of lowercase and uppercase
+    assert(countSeats("CT5D,NY9R16D1I,VT,ne3r00D", 'r', seats) == 0 && seats == 12);
+    //party code exists, but is part of state code
+    assert(countSeats("CT5D,NY9R16D1I,VT,ne3r00D", 'C', seats) == 0 && seats == 0);
+    //updating seat count, check for reset
+    assert(countSeats("CT5D,NY9R16D1I,VT,ne3r03r", 'R', seats) == 0 && seats == 15);
+    //multiple of the same party code in 1 state forecast
+    assert(countSeats("CT5D,NY9R16D1I,VT,ne3r00D,TX03U9I2Z5U", 'U', seats) == 0 && seats == 8);
+    //party code exists, but is part of both state code and party results
+    assert(countSeats("CT5D,NY9R16D1I3C,VT,ne3r00D09C", 'C', seats) == 0 && seats == 12);
+    seats = -999;
+    //ensure that seats stays at -999 for an invalid input string
+    assert(countSeats("CT5D,NY9R6D1I,VT,ne3r0%D", 'c', seats) == 1 && seats == -999);
+    //seat updates to 0 if valid input but no party result
+    assert(countSeats("CT5D,NY9R6D1I,VT,ne3r00D", 'c', seats) == 0 && seats == 0);
+    //seat resets to 11
+    assert(countSeats("CT5D,NY9R6D1I,VT,ne3r00D", 'd', seats) == 0 && seats == 11);
+    cout << "Testing completed -- passed." << endl;
+    
+//    string pollData;
+//    char partyLetter;
+//    cout << "Enter poll data: ";
+//    getline(cin, pollData);
+//    cout << "Enter party letter: ";
+//    cin >> partyLetter;
+//
+//    int seats;
+//    seats = -999;
+//    int x = countSeats(pollData, partyLetter, seats);
+//    cout << x << " " << seats << " seats " << endl;
+    
     return 0;
 }
 

@@ -6,7 +6,9 @@
 //
 
 #include <iostream>
-#include <vector>
+#include <string>
+#include <cassert>
+#include <cctype>
 using namespace std;
 
 int appendToAll(string a[], int n, string value);
@@ -25,7 +27,6 @@ int main() {
 
     //appendToAll
     string a[3] = { "rishi", "margaret", ""};
-    string empty[0] = {};
     assert(appendToAll(a, 3, "?") == 3 && a[0] == "rishi?" && a[1] == "margaret?" && a[2] == "?");
     //append to no elements in array
     assert(appendToAll(a, 0, "?") == 0 && a[0] == "rishi?" && a[1] == "margaret?");
@@ -33,8 +34,8 @@ int main() {
     assert(appendToAll(a, -3, "") == -1);
     //append empty string
     assert(appendToAll(a, 3, "") == 3 && a[0] == "rishi?" && a[2] == "?");
-    //append to empty array
-    assert(appendToAll(empty, 0, "!!") == 0);
+    //append to no elements
+    assert(appendToAll(a, 0, "!!") == 0);
 
     //lookup
     string people[5] = { "boris", "gordon", "rishi", "liz", "john" };
@@ -52,8 +53,8 @@ int main() {
     assert(lookup(people1, 5, "boris") == 0);
     //negative n input
     assert(lookup(people1, -4, "rishi") == -1);
-    //empty array
-    assert(lookup(empty, 0, "") == -1);
+    //no elements in array
+    assert(lookup(people, 0, "") == -1);
 
     //positionOfMax
     string h[7] = { "rishi", "margaret", "gordon", "tony", "", "john", "liz" };
@@ -61,13 +62,13 @@ int main() {
     //part of the array
     assert(positionOfMax(h, 2) == 0);
     //array of empty strings
-    string g[5] = { "", "", "", "", ""};
+    string g[5] = {};
     assert(positionOfMax(g,5) == 0);
     //nonunique string elements
     string y[4] = {"hello", "hello","hello","hello"};
     assert(positionOfMax(y, 4) == 0);
-    //empty array
-    assert(positionOfMax(empty, 0) == -1);
+    //no elements in array
+    assert(positionOfMax(h, 0) == -1);
     //increasing order, max is last element
     string alphabet[5] = {"a", "b", "c", "d", "e"};
     assert(positionOfMax(alphabet, 5) == 4);
@@ -102,8 +103,8 @@ int main() {
     assert(countRuns(c, 4) == 3);
     //negative array size
     assert(countRuns(c, -1) == -1);
-    //empty array
-    assert(countRuns(empty, 0) == 0);
+    //no elements in array
+    assert(countRuns(d, 0) == 0);
 
     //flip
     //array with odd # of elements
@@ -112,8 +113,8 @@ int main() {
     assert(flip(c, 6) == 6 && c[0] == "" && c[2] == "arav" && c[3] == "tony" && c[5] == "");
     //array of empty strings
     assert(flip(g, 5) == 5 && g[0] == "" && g[3] == "" && g[4] == "");
-    //empty array
-    assert(flip(empty, 0) == 0);
+    //no elements in array
+    assert(flip(c, 0) == 0);
     //array of size 1
     string one[1] = {"hi"};
     assert(flip(one, 1) == 1 && one[0] == "hi");
@@ -123,6 +124,7 @@ int main() {
     //differ
     string leader[6] = { "boris", "rishi", "", "tony", "theresa", "david" };
     string politician[5] = { "boris", "rishi", "david", "", "tony" };
+    string sodas[6] = {"fanta", "sprite", "pepsi", "cola", "seven-up", "dr. pepper"};
     assert(differ(leader, 6, politician, 5) == 2);
     //arrays are the same
     assert(differ(leader, 6, leader, 6) == 6);
@@ -131,10 +133,12 @@ int main() {
     //a1 runs out
     assert(differ(politician, 1, leader, 2) == 1);
     //arrays are entirely different
-    assert(differ(people, 5, empty, 0) == 0);
+    assert(differ(people, 5, sodas, 6) == 0);
     //negative array sizes
-    assert(differ(people, -5, empty, 0) == -1);
-    assert(differ(people, 5, empty, -1) == -1);
+    assert(differ(people, -5, sodas, 6) == -1);
+    assert(differ(people, 5, sodas, -1) == -1);
+    //inspecting no elements
+    assert(differ(people, 5, sodas, 0) == 0);
 
     //subsequence
     string o[7] = {"banana", "orange", "apple", "kiwi", "grapes", "berries", "pineapple"};
@@ -144,8 +148,8 @@ int main() {
     //same but non-consecutive elements
     assert(subsequence(o, 7, p1, 3) == -1);
     //empty sequences are subsequence to any array
-    assert(subsequence(p1, 3, empty, 0) == 0);
-    assert(subsequence(empty, 0, empty, 0) == 0);
+    assert(subsequence(p1, 3, p, 0) == 0);
+    assert(subsequence(p1, 0, p1, 0) == 0);
     //a2 size greater than a1
     assert(subsequence(p, 3, o, 7) == -1);
     string p2[3] = {"pineapple", "pineapple", "grapes"};
@@ -165,8 +169,8 @@ int main() {
     assert(lookupAny(o, 7, p9, 3) == 0);
     //no occurrences
     assert(lookupAny(leader, 6, p1, 3) == -1);
-    //empty array
-    assert(lookupAny(politician, 5, empty, 0) == -1);
+    //no elements in array
+    assert(lookupAny(politician, 5, sodas, 0) == -1);
     //same arrays
     assert(lookupAny(people, 5, people, 5) == 0);
 
@@ -235,8 +239,8 @@ int main() {
     }
     cout << endl;
     
-    //empty array
-    assert(split(empty, 0, "") == 0);
+    //no elements in array
+    assert(split(sames, 0, "") == 0);
     
     cout << "All tests succeeded" << endl;
     
@@ -337,9 +341,13 @@ int differ(const string a1[], int n1, const string a2[], int n2){
     }
     int end = 0;
     //checking up to whichever runs out first, n1 or n2
-    end = (n1 >= n2) ? n2 : n1;
+    if(n1 >= n2){
+        end = n2;
+    }else{
+        end = n1;
+    }
     int position = end;
-    for(int i = 0; i <= end; i++){
+    for(int i = 0; i < end; i++){
         //as soon as they differ, return position to break out of function
         if(a1[i] != a2[i]){
             position = i;

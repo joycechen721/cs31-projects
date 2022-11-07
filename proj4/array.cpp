@@ -55,6 +55,9 @@ int main() {
     assert(lookup(people1, -4, "rishi") == -1);
     //no elements in array
     assert(lookup(people, 0, "") == -1);
+    //array of empty strings
+    string empty[3] = {"", "", ""};
+    assert(lookup(empty, 3, "") == 0);
 
     //positionOfMax
     string h[7] = { "rishi", "margaret", "gordon", "tony", "", "john", "liz" };
@@ -88,6 +91,7 @@ int main() {
     assert(rotateLeft(h, -4, 4) == -1);
     //rotate from last index
     assert(rotateLeft(people, 5, 4) == 4 && people[0] == "gordon" && people[4] == "boris");
+    assert(rotateLeft(people, 5, -4) == -1 && people[0] == "gordon" && people[4] == "boris");
 
     //countRuns
     string d[9] = {"tony", "boris", "rishi", "rishi", "rishi", "gordon", "gordon", "gordon", "rishi"};
@@ -180,14 +184,14 @@ int main() {
         cout << o[i] << " ";
     }
     cout << endl;
-    
+
     //splitter inside array, in correct position
     assert(split(politician, 5, "david") == 2);
     for(int i = 0; i < 5; i++){
         cout << politician[i] << " ";
     }
     cout << endl;
-    
+
     //splitter inside array, not in correct position
     string pm2[4] = { "margaret", "theresa", "liz", "rishi" };
     assert(split(pm2, 4, "rishi") == 2);
@@ -195,7 +199,7 @@ int main() {
         cout << pm2[i] << " ";
     }
     cout << endl;
-    
+
     //splitter as multiple array elements
     string sames[8] = {"rishi", "abe", "sarah", "kinsely", "rishi", "lily", "rishi", "rishi"};
     assert(split(sames, 8, "rishi") == 3);
@@ -203,45 +207,45 @@ int main() {
         cout << sames[i] << " ";
     }
     cout << endl;
-    
+
     //splitter equivalent to all elements
     assert(split(g, 5, "") == 0);
     for(int i = 0; i < 5; i++){
         cout << g[i] << " ";
     }
     cout << endl;
-    
+
     //splitter at first element
     assert(split(alphabet, 5, "a") == 0);
     for(int i = 0; i < 5; i++){
         cout << alphabet[i] << " ";
     }
     cout << endl;
-    
+
     //splitter at last element
     assert(split(alphabet, 5, "e") == 4);
     for(int i = 0; i < 5; i++){
         cout << alphabet[i] << " ";
     }
     cout << endl;
-    
+
     //splitter smaller than all elements
     assert(split(alphabet, 5, "") == 0);
     for(int i = 0; i < 5; i++){
         cout << alphabet[i] << " ";
     }
     cout << endl;
-    
+
     //splitter greater than all elements
     assert(split(alphabet, 5, "f") == 5);
     for(int i = 0; i < 5; i++){
         cout << alphabet[i] << " ";
     }
     cout << endl;
-    
+
     //no elements in array
     assert(split(sames, 0, "") == 0);
-    
+
     cout << "All tests succeeded" << endl;
     
     return 0;
@@ -287,7 +291,7 @@ int positionOfMax(const string a[], int n){
 
 int rotateLeft(string a[], int n, int pos){
     //check if pos is invalid (out of bounds)
-    if(n < 0 || pos >= n){
+    if(n < 0 || pos >= n || pos < 0){
         return -1;
     }
     //store item at pos, since it'll be eliminated in the loop

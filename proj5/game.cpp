@@ -55,7 +55,9 @@ int main()
         cout << "Round " << i << endl;
         //get a random integer in the range of numWords to serve as this round's answer
         int randomInt = randInt(0, numWords - 1);
+        
         cout << words[randomInt] << endl;
+        
         //play the round and get its score
         int score = playOneRound(words, numWords, randomInt);
         if(i == 1 || score < minScore){
@@ -100,9 +102,9 @@ int playOneRound(const char words[][7], int nWords, int wordnum){
         silvers = 0;
         
         //prompt user for a guess
-        char userWord[MAXWORDLENGTH + 1];
+        char userWord[1001];
         cout << "Probe word: ";
-        cin.getline(userWord, 10000);
+        cin.getline(userWord, 1000);
     
         //check if user guess is valid
         if(strlen(userWord) < 4 || strlen(userWord) > 6 || !isValidWord(userWord)){

@@ -9,7 +9,6 @@
 #include <cctype>
 #include <cstring>
 #include "utilities.h"
-#include <limits>
 using namespace std;
 
 int playOneRound(const char words[][7], int nWords, int wordnum);
@@ -24,32 +23,42 @@ int main()
     cout.precision(2);
     char words[MAXWORDS][MAXWORDLENGTH + 1];
     
+    //fill words array with words from file
     int numWords = getWords(words, MAXWORDS, "/Users/joycechen/cs31/words.txt");
+    
+    //check if getWords returns a negative # or # greater than max limit
     if(numWords < 1 || numWords > MAXWORDS){
         cout << "No words were loaded, so I can't play the game." << endl;
         return 0;
     }
-    int rounds;
-    int total = 0;
-    double average;
-    int minScore = INT_MAX;
-    int maxScore = INT_MIN;
     
+    int rounds;
+    double total = 0;
+    double average;
+    int minScore = 0;
+    int maxScore = 0;
+    
+    //prompt user for #of rounds
     cout << "How many rounds do you want to play? ";
     cin >> rounds;
+    cin.ignore(10000, '\n');
     
+    //check for invalid rounds input
     if(rounds < 0){
         cout << "The number of rounds must be positive." << endl;
         return 0;
     }
-    
     cout << endl;
+    
+    //playing each round
     for(int i = 1; i <= rounds; i++){
         cout << "Round " << i << endl;
+        //get a random integer in the range of numWords to serve as this round's answer
         int randomInt = randInt(0, numWords - 1);
-//        cout << words[randomInt] << endl;
+        cout << words[randomInt] << endl;
+        //play the round and get its score
         int score = playOneRound(words, numWords, randomInt);
-        if(score < minScore){
+        if(i == 1 || score < minScore){
             minScore = score;
         }
         if (score > maxScore){
@@ -60,52 +69,70 @@ int main()
         }else{
             cout << "You got it in " << score << " tries." << endl;
         }
+        //add this round's score to overall total
         total += score;
+        //calculate the average
         average = total/i;
         cout << "Average: " << average << ", minimum: " << minScore << ", maximum: " << maxScore << endl << endl;
     }
     return 0;
 }
 
+//responsible for 1 game round's functionality
 int playOneRound(const char words[][7], int nWords, int wordnum){
     if(nWords < 0 || wordnum < 0 || wordnum >= nWords){
         return -1;
     }
-    //length of the answer
+    //length of the answer string
     const int length = static_cast<int>(strlen(words[wordnum]));
 
-    int golds = 0;
-    int silvers = 0;
-    int count = 0;
+    int golds = 0;   //stores each guess's # of golds
+    int silvers = 0; //stores each guess's # of silvers
+    int count = 0;   //stores each round's # of tries
 
     while(golds != length){
+        //store answer string into a C string variable
         char word[MAXWORDLENGTH + 1];
         strcpy(word, words[wordnum]);
+        
+        //reset golds & silvers to 0 after each guess
         golds = 0;
         silvers = 0;
         
+        //prompt user for a guess
         char userWord[MAXWORDLENGTH + 1];
         cout << "Probe word: ";
-        cin >> userWord;
-        
-        int userLen = strlen(userWord);
-        if(userLen < 4 || userLen > 6 || !isValidWord(userWord)){
+        cin.getline(userWord, 10000);
+    
+        //check if user guess is valid
+        if(strlen(userWord) < 4 || strlen(userWord) > 6 || !isValidWord(userWord)){
             cout << "Your probe word must be a word of 4 to 6 lower case letters." << endl;
         }
         else if (!wordExists(words, nWords, userWord)){
             cout << "I don't know that word." << endl;
         }
+        //user guess is valid at this point
         else{
+            //loop through the user's guess, counting golds
             for(int i = 0; i < strlen(userWord); i++){
+                //if character at user's guess is same as that in answer string (same position)
                 if(i < strlen(word) && userWord[i] == word[i]){
                     golds++;
+                    //mark seen characters
+                    userWord[i] = '1';
                     word[i] = '1';
-                } else{
-                    for(int j = 0; j < strlen(word); j++){
-                        if(word[j] != '1' && userWord[i] == word[j]){
-                            silvers++;
-                            word[j] = '1';
-                        }
+                }
+            }
+            //loop through user's guess, counting silvers
+            for(int i = 0; i < strlen(userWord); i++){
+                //loop through answer string
+                for(int j = 0; j < strlen(word); j++){
+                    //check if the character in user's guess matches any other character in answer string
+                    if(userWord[i] != '1' && word[j] != '1' && userWord[i] == word[j]){
+                        silvers++;
+                        //mark seen characters
+                        userWord[i] = '1';
+                        word[j] = '1';
                     }
                 }
             }
@@ -118,6 +145,7 @@ int playOneRound(const char words[][7], int nWords, int wordnum){
     return count;
 }
 
+//returns true only if word is inside an array
 bool wordExists(const char words[][7], int nWords, char* word){
     for(int i = 0; i < nWords; i++){
         if(strcmp(words[i],word) == 0){
@@ -127,9 +155,10 @@ bool wordExists(const char words[][7], int nWords, char* word){
     return false;
 }
 
+//returns true only if word doesn't have uppercase or non-alphabetical letters
 bool isValidWord(const char* word){
     for(int i = 0; i < strlen(word); i++){
-        if(isupper(word[i]) || !isalpha(word[i])){
+        if(isupper(word[i]) || !isalpha(word[i]) || isspace(word[i])){
             return false;
         }
     }

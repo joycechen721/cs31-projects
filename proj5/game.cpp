@@ -1,6 +1,6 @@
 //
 //  game.cpp
-//  Project5
+//  Project5 - really similar to MasterMind & Wordle
 //
 //  Created by Joyce Chen on 11/3/22.
 //
@@ -16,6 +16,7 @@ bool wordExists(const char words[][7], int nWords, char* word);
 bool isValidWord(const char* word);
 const int MAXWORDS = 9000;
 const int MAXWORDLENGTH = 6;
+const char WORDFILENAME[] = "/Users/joycechen/cs31/words.txt";
 
 int main()
 {
@@ -24,7 +25,7 @@ int main()
     char words[MAXWORDS][MAXWORDLENGTH + 1];
     
     //fill words array with words from file
-    int numWords = getWords(words, MAXWORDS, "/Users/joycechen/cs31/words.txt");
+    int numWords = getWords(words, MAXWORDS, WORDFILENAME);
     
     //check if getWords returns a negative # or # greater than max limit
     if(numWords < 1 || numWords > MAXWORDS){
@@ -44,7 +45,7 @@ int main()
     cin.ignore(10000, '\n');
     
     //check for invalid rounds input
-    if(rounds < 0){
+    if(rounds <= 0){
         cout << "The number of rounds must be positive." << endl;
         return 0;
     }
@@ -55,8 +56,7 @@ int main()
         cout << "Round " << i << endl;
         //get a random integer in the range of numWords to serve as this round's answer
         int randomInt = randInt(0, numWords - 1);
-        
-        cout << words[randomInt] << endl;
+        cout << "The hidden word is " << strlen(words[randomInt]) << " letters long." << endl;
         
         //play the round and get its score
         int score = playOneRound(words, numWords, randomInt);
@@ -81,8 +81,8 @@ int main()
 }
 
 //responsible for 1 game round's functionality
-int playOneRound(const char words[][7], int nWords, int wordnum){
-    if(nWords < 0 || wordnum < 0 || wordnum >= nWords){
+int playOneRound(const char words[][MAXWORDLENGTH + 1], int nWords, int wordnum){
+    if(nWords <= 0 || wordnum < 0 || wordnum >= nWords){
         return -1;
     }
     //length of the answer string
@@ -102,9 +102,9 @@ int playOneRound(const char words[][7], int nWords, int wordnum){
         silvers = 0;
         
         //prompt user for a guess
-        char userWord[1001];
+        char userWord[101];
         cout << "Probe word: ";
-        cin.getline(userWord, 1000);
+        cin.getline(userWord, 100);
     
         //check if user guess is valid
         if(strlen(userWord) < 4 || strlen(userWord) > 6 || !isValidWord(userWord)){
@@ -116,7 +116,7 @@ int playOneRound(const char words[][7], int nWords, int wordnum){
         //user guess is valid at this point
         else{
             //loop through the user's guess, counting golds
-            for(int i = 0; i < strlen(userWord); i++){
+            for(int i = 0; userWord[i] != '\0'; i++){
                 //if character at user's guess is same as that in answer string (same position)
                 if(i < strlen(word) && userWord[i] == word[i]){
                     golds++;
@@ -126,9 +126,9 @@ int playOneRound(const char words[][7], int nWords, int wordnum){
                 }
             }
             //loop through user's guess, counting silvers
-            for(int i = 0; i < strlen(userWord); i++){
+            for(int i = 0; userWord[i] != '\0'; i++){
                 //loop through answer string
-                for(int j = 0; j < strlen(word); j++){
+                for(int j = 0; word[j] != '\0'; j++){
                     //check if the character in user's guess matches any other character in answer string
                     if(userWord[i] != '1' && word[j] != '1' && userWord[i] == word[j]){
                         silvers++;
@@ -159,7 +159,7 @@ bool wordExists(const char words[][7], int nWords, char* word){
 
 //returns true only if word doesn't have uppercase or non-alphabetical letters
 bool isValidWord(const char* word){
-    for(int i = 0; i < strlen(word); i++){
+    for(int i = 0; word[i] != '\0'; i++){
         if(isupper(word[i]) || !isalpha(word[i]) || isspace(word[i])){
             return false;
         }

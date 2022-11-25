@@ -691,7 +691,7 @@ int countDangers(const Arena& a, int r, int c){
         int col = c;
         attemptMove(a, i, row, col);
         if(a.numberOfRabbitsAt(row, col) != 0){
-            count++;
+            count += a.numberOfRabbitsAt(row, col);
         }
     }
     return count;
@@ -706,7 +706,7 @@ bool recommendMove(const Arena& a, int r, int c, int& bestDir)
     if(dangers == 0){
         return false;
     }
-    int minDanger = a.rabbitCount();
+    int minDanger = dangers;
     for(int i = 0; i < NUMDIRS; i++){
         int row = r;
         int col = c;
@@ -717,7 +717,7 @@ bool recommendMove(const Arena& a, int r, int c, int& bestDir)
             bestDir = i;
         }
     }
-    if(minDanger == a.rabbitCount()) return false;
+    if(minDanger == dangers) return false;
     return true;
 
       // Your replacement implementation should do something intelligent.

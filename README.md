@@ -1,2 +1,2 @@
 # cs31-projects
-fall 2022
+fall 2022 (smallberg)
